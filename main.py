@@ -1,6 +1,6 @@
 import yaml, os
-from ftplib import FTP, error_perm
-import platform
+from ftplib import FTP
+import platform, time, math
 
 def loadConfiguration(file):
     with open(file) as f:
@@ -11,11 +11,14 @@ def loadConfiguration(file):
         password = templates['password']
         src = templates['backup_src']
         dst = templates['backup_dst']
-
+        save_days=templates['days']
     except:
         return '','','','','',''
     else:
-        return address,username,password,src,dst
+        return address,username,password,src,dst,save_days
+
+def oldFilesDay(timestamp):
+    return math.floor(timestamp/(60*60*24))
 
 def creation_date(path_to_file):
     """
@@ -37,7 +40,7 @@ def creation_date(path_to_file):
 
 class ftpGetFiles():
     def __init__(self, param):
-        addr,user,password,self.src,self.dst = param
+        addr,user,password,self.src,self.dst,save_days = param
         self.ftp = FTP(addr)
         self.ftp.login(user,password)
         self.ftp.cwd(self.src)
@@ -59,16 +62,21 @@ class ftpGetFiles():
         return_list = self.__getArchiveList__()
         for archive in return_list:
             local_filename = os.path.join(self.dst, archive)
-            lf = open(local_filename, "wb")
-            self.ftp.retrbinary("RETR " + archive, lf.write, 8 * 1024)
+            with open(local_filename, "wb") as lf:
+                self.ftp.retrbinary("RETR " + archive, lf.write, 8 * 1024)
         return return_list
-    def removeOldArchive(self):
+
+    def removeOldArchive(self,save_days):
         for file in self.__listFilesOnDst__():
              local_filename = os.path.join(self.dst, file)
-             print(creation_date(local_filename))
+             delta = time.time()-creation_date(local_filename)
+             if oldFilesDay(delta) >= int(save_days):
+                 os.remove(local_filename)
+
 
 if __name__ == "__main__":
-    files = ftpGetFiles(loadConfiguration('info.yaml'))
+    param = loadConfiguration('info.yaml')
+    files = ftpGetFiles(param)
     for log in files.getArchives():
         print(log)
-    print(files.removeOldArchive())
+    files.removeOldArchive(param[5])

@@ -43,11 +43,11 @@ class download_from_ftp():
             self.days = self.params[server]['days']
             self.__connect_to_ftp__()
             archive_list+= self.__getArchives__()
-            self.removeOldArchive()
+            self.removeOldArchive(self.destination, self.days)
         return archive_list
 
-    def secondInDay(self):
-        return 60 * 60 * 24 * self.days
+    def secondInDay(self,days):
+        return 60 * 60 * 24 * days
 
     def creation_date(self, path_to_file):
         """
@@ -66,16 +66,23 @@ class download_from_ftp():
                 # so we'll settle for when its content was last modified.
                 return stat.st_mtime
 
-    def removeOldArchive(self):
+    def removeOldArchive(self, destination, days):
         for file in self.__listFilesOnDst__():
-             local_filename = os.path.join(self.destination, file)
-             timestamp_to_deleted = self.secondInDay() + self.creation_date(local_filename)
+             local_filename = os.path.join(destination, file)
+             timestamp_to_deleted = self.secondInDay(days) + self.creation_date(local_filename)
              if timestamp_to_deleted <= time.time():
                  os.remove(local_filename)
 
 if __name__ == "__main__":
-    archives = download_from_ftp('config.yaml')
-    print(archives.download_archive())
+    archives = download_from_ftp(os.path.join(os.path.dirname(__file__),'config.yaml'))
+    list_archive = archives.download_archive()
+    if not list_archive:
+        print("No archives to download")
+    else:
+        print("Archives to download:")
+        for list in list_archive:
+            print(list)
+
 
 
 

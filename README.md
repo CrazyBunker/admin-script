@@ -3,9 +3,10 @@
 Reads yaml file - info.yaml\
 Sample file content:
 ~~~~~~~~
-address: <ip>
-username: <username>
-password: <password>
-backup_src: <path to directory in ftp>
-backup_dst: <path to local directory>
+server:
+    address: <ip>
+    username: <username>
+    password: <password>
+    source: <path to directory in ftp>
+    destination: <path to local directory>
 ~~~~~~~~

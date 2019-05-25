@@ -1,4 +1,4 @@
-#Script description:
+# Script description:
 ## file_type_analysis 
 A script for calculating the size of files with grouping by file extension, a list with a mapping is taken from a csv file with a separator
 

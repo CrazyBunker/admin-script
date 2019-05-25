@@ -5,7 +5,7 @@ import platform, time
 class download_from_ftp():
 
     def __init__(self, file):
-        with open(file) as f:
+
             self.params = yaml.safe_load(f)
     def __connect_to_ftp__(self):
             self.ftp = FTP(self.addr)

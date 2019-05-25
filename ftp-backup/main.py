@@ -40,7 +40,7 @@ def creation_date(path_to_file):
 
 class ftpGetFiles():
     def __init__(self, param):
-        addr,user,password,self.src,self.dst,save_days = param
+        addr,user,password,self.src,self.dst,self.saveDays = param
         self.ftp = FTP(addr)
         self.ftp.login(user,password)
         self.ftp.cwd(self.src)
@@ -66,17 +66,17 @@ class ftpGetFiles():
                 self.ftp.retrbinary("RETR " + archive, lf.write, 8 * 1024)
         return return_list
 
-    def removeOldArchive(self,save_days):
+    def removeOldArchive(self):
         for file in self.__listFilesOnDst__():
              local_filename = os.path.join(self.dst, file)
              delta = time.time()-creation_date(local_filename)
-             if oldFilesDay(delta) >= int(save_days):
+             if oldFilesDay(delta) >= int(self.saveDays):
                  os.remove(local_filename)
 
 
 if __name__ == "__main__":
-    param = loadConfiguration('info.yaml')
+    param = loadConfiguration(os.path.dirname(__file__)+'/info.yaml')
     files = ftpGetFiles(param)
     for log in files.getArchives():
         print(log)
-    files.removeOldArchive(param[5])
+    files.removeOldArchive()

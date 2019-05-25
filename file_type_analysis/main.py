@@ -28,16 +28,19 @@ class analysis_file():
             for line in indefile:
 
                 string = line.split(";")
-                ext = re.match(r'.*\.(.*)\"$', string[self.unpack_map['orig']]).groups(1)[0]
-                path = '/'.join([self.dir] + [string[i] for i in self.unpack_map['path']] + \
-                                [string[self.unpack_map['filename']].replace('"','')+'.'+self.type_file])
-                if os.path.isfile(path):
-                    if not ext in a:
-                        a[ext] = 0
-                    else:
-                        a[ext] += os.path.getsize(path)
-                self.progress(count, max)
-                count += 1
+                try:
+                    ext = re.match(r'.*\.(.*)\"$', string[self.unpack_map['orig']]).groups(1)[0]
+                    path = '/'.join([self.dir] + [string[i] for i in self.unpack_map['path']] + \
+                                    [string[self.unpack_map['filename']].replace('"','')+'.'+self.type_file])
+                    if os.path.isfile(path):
+                        if not ext in a:
+                            a[ext] = 0
+                        else:
+                            a[ext] += os.path.getsize(path)
+                    self.progress(count, max)
+                    count += 1
+                except:
+                    pass
 
 
         return a

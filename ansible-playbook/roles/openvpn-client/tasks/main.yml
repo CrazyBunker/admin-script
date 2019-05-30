@@ -1,0 +1,9 @@
+- name: Update apt
+  apt: 
+    update-cache: yes
+    upgrade: no
+- name: Install packages
+  apt: name={{ item }} state=latest
+  with_items:
+      - openvpn
+        

@@ -1,3 +1,3 @@
 [clients]
-cleint1 ansible_ssh_host=192.168.1.23
+client1 ansible_ssh_host=192.168.1.23
 

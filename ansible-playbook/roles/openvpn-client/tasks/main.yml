@@ -3,7 +3,18 @@
     update-cache: yes
     upgrade: no
 - name: Install packages
-  apt: name={{ item }} state=latest
-  with_items:
-      - openvpn
+  apt: name=openvpn state=latest
+
+- name: write client config
+  template:
+    src: client.conf.j2
+    dest: "{{ openvpn_dst_config  }}"
+    owner: root
+    group: root
+    mode: '0400'
+  notify:
+    - restart openvpn
+
+-
+
         

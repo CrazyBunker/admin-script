@@ -1,2 +1,0 @@
-ansible_ssh_user: user
-openvpn_src_config: /etc/openvpn

@@ -4,7 +4,8 @@ dev {{ openvpn_client_dev }}
 key-direction 1
 remote-cert-tls server
 
-remote {{ openvpn_client_remote }} {{ openvpn_client_remote_port }} {{ openvpn_client_remote_protocol }}
+remote {{ openvpn_client_remote }} {{ openvpn_client_remote_port }}
+proto {{ openvpn_client_remote_protocol }}
 
 <key>
 {{ openvpn_client_key }}

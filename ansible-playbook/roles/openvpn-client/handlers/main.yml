@@ -1,5 +1,8 @@
 ---
 # handlers file for openvpn-client
+- name: start_openvpn
+  become: yes
+  service: name="openvpn@{{ openvpn_dst_config | basename | replace('.conf', '') }}.service" state=restarted enabled=yes
+  listen: "restart openvpn services"
 
-- name: restart openvpn
-  service: name=openvpn state=reloaded
+

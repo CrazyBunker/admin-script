@@ -1,8 +1,13 @@
 ---
 # defaults file for openvpn-client
+openvpn_client_remote: 192.168.1.25
+openvpn_client_remote_port: 1194
+openvpn_client_remote_protocol: tcp
 openvpn_client_dev: tun
-openvpn_dst_config: /etc/openvpn/client.conf
-openvpn_client_cert: "{{ lookup('file', 'files/client/client.crt') }}"
-openvpn_client_key: "{{ lookup('file', 'files/client/client.key') }}"
-openvpn_ca: "{{ lookup('file', 'files/client/ca.crt') }}"
-openvpn_tls: "{{ lookup('file', 'files/client/tls.key') }}"
+openvpn_dst_config: etc/openvpn/client.conf
+
+
+openvpn_client_cert: "{{ lookup('file', '{{ inventory_hostname }}/client.crt') }}"
+openvpn_client_key: "{{ lookup('file', '{{ inventory_hostname }}/client.key') }}"
+openvpn_ca: "{{ lookup('file', '{{ inventory_hostname }}/ca.crt') }}"
+openvpn_tls: "{{ lookup('file', '{{ inventory_hostname }}/tls.key') }}"

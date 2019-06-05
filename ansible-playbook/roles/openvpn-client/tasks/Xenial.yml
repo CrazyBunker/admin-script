@@ -1,17 +1,25 @@
 - name: Install packages
+  become: yes
   apt:
     name: openvpn
     state: latest
 
 - name: write client config
-  template:
-    src: client.conf.j2
-    dest: "{{ openvpn_dst_config  }}"
-    owner: root
-    group: root
-    mode: '0400'
-  notify:
-    - restart openvpn
+  become: yes
+  template: src="{{ item }}.j2" dest="/{{ item }}" owner=root group=root  mode='0400'
+  notify: restart openvpn services
+  with_items:
+    - "{{ openvpn_dst_config }}"
+    -
+- name: Check status openvpn
+  command: "systemctl status openvpn@{{ openvpn_dst_config | basename | replace('.conf', '') }}.service"
+  register: openvpn_started
+  ignore_errors: True
+
+- name: OpenVPN not started
+  debug:
+    msg: 'OpenVPN not started'
+  when: openvpn_started is failed
 
 -
 

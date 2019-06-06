@@ -1,0 +1,44 @@
+---
+- name: add users with default password (pass)
+  become: yes
+  user:
+    name: '{{ item.name }}'
+#    password: "$6$VKqjcNgs4TtBG$qB4rZVnSME1ZVCxd/bWrX2uwKz5VQIYPZA5CEtfuDyIz/BQennnDgyD5vWrai2QpmJU/pqTY2vXqMixinju76."
+    shell: /bin/bash
+    createhome: yes
+    groups: '{{ item.groups }}'
+  with_items: '{{ adduser.users }}'
+  when: item.change
+
+- name: set authorized key
+  become: yes
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', 'ssh/{{ item.name }}.pub') }}"
+    path: /home/{{ item.name }}/.ssh/authorized_keys
+    state: present
+  with_items: "{{ adduser.users }}"
+  when: item.change
+  
+#- name: set change password before first login
+#  command: chage -d 0 {{ item.name }}
+#  with_items: '{{ adduser.users }}'
+#  when: item.change
+
+- name: remove user
+  become: yes
+  user:
+    name: '{{ item }}'
+    state: absent
+    remove: yes
+  with_items: '{{ rmuser.users }}'
+  when: rmuser is defined
+
+- name: lock user
+  become: yes
+  user:
+    name: '{{ item }}'
+    password_lock: yes
+  with_items: '{{ lock.users }}'
+  when: lock is defined
+...

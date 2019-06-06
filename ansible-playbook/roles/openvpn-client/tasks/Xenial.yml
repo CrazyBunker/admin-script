@@ -1,8 +1,8 @@
 - name: Install packages
   become: yes
   apt:
-    name: openvpn
-    state: latest
+    name: openvpn=2.3.10-1ubuntu2
+    state: fixed
 
 - name: write client config
   become: yes
@@ -10,16 +10,7 @@
   notify: restart openvpn services
   with_items:
     - "{{ openvpn_dst_config }}"
-    -
-- name: Check status openvpn
-  command: "systemctl status openvpn@{{ openvpn_dst_config | basename | replace('.conf', '') }}.service"
-  register: openvpn_started
-  ignore_errors: True
 
-- name: OpenVPN not started
-  debug:
-    msg: 'OpenVPN not started'
-  when: openvpn_started is failed
 
 -
 

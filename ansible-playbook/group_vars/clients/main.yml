@@ -3,17 +3,15 @@ openvpn_client_remote_port: 1194
 openvpn_client_remote_protocol: tcp
 adduser:
   users:
-    - name: username
-      pubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDpeGJvqFVw/LUsxcav2xoSvt+6/D/Hgg9UkIT6iqg0GTGanzACkMs2FLfUbpoXx6L7JuDg9gYU8v9TgqYzbCuXRcTd8Lcvk3t8o4hKn4zga37yxclg8VvWgap9jyslVsnMf24UNrpJ4s7xGQm3rN81HmKxA9shpw3GUvS7i8LZqU3M2wWBxAxkp8ourv8L5H66d0P5LS4fS2TVQkOT4i0nEiR78pIZhNB89/Je6fg/pSIn1BtcvkIQ1qkMdLehlG9VXIpafXMB8UKdLLmlaPMas5B4BMb00P8WlgzCpv1enpJmQ+z3ZmDnPCwyqAjA30laap7NrT82B8rm1DMnfZJ user@ansible"
+    - name: username_example
       groups: ''
       change: false
-    - name: username1
-      pubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDDpeGJvqFVw/LUsxcav2xoSvt+6/D/Hgg9UkIT6iqg0GTGanzACkMs2FLfUbpoXx6L7JuDg9gYU8v9TgqYzbCuXRcTd8Lcvk3t8o4hKn4zga37yxclg8VvWgap9jyslVsnMf24UNrpJ4s7xGQm3rN81HmKxA9shpw3GUvS7i8LZqU3M2wWBxAxkp8ourv8L5H66d0P5LS4fS2TVQkOT4i0nEiR78pIZhNB89/Je6fg/pSIn1BtcvkIQ1qkMdLehlG9VXIpafXMB8UKdLLmlaPMas5B4BMb00P8WlgzCpv1enpJmQ+z3ZmDnPCwyqAjA30laap7NrT82B8rm1DMnfZJ user@ansible"
+    - name: username
       groups: ''
       change: true
-rmuser:
-  users:
-    - username
+#rmuser:
+#  users:
+#    - username
 #lock:
 #  users:
 #    - username3

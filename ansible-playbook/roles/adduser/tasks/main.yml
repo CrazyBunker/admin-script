@@ -1,4 +1,9 @@
 ---
+#- name: Add a domain symlinks /tmp for server_aliases.
+#  debug: msg="name - {{ item.0.sudo.file }} and serverAlias - {{ item.1 }}"
+#  with_subelements:
+#   - "{{ adduser.users }}"
+#   - sudo.line
 - name: add users with default password (pass)
   become: yes
   user:
@@ -19,17 +24,20 @@
     state: present
   with_items: "{{ adduser.users }}"
   when: item.change
+
 - name: "Add user item.name to sudo"
   become: yes
   lineinfile:
-    path: "/etc/sudoers.d/{{item.sudo.file}}"
-    line: '{{item.name}} ALL=(ALL) NOPASSWD: ALL'
+    path: "/etc/sudoers.d/{{item.0.sudo.file}}"
+    line:  "{{ item.1 }}"
     state: present
     mode: 0440
     create: yes
   validate: 'visudo -cf %s'
-  with_items: "{{ adduser.users }}"
-  when: item.sudo is defined
+  with_subelements:
+    - "{{ adduser.users }}"
+    - sudo.line
+  when: item.0.change and item.0.sudo is defined
 #- name: set change password before first login
 #  command: chage -d 0 {{ item.name }}
 #  with_items: '{{ adduser.users }}'
@@ -41,6 +49,7 @@
     name: '{{ item }}'
     state: absent
     remove: yes
+    force: yes
   with_items: '{{ rmuser.users }}'
   when: rmuser is defined
 
@@ -51,4 +60,4 @@
     password_lock: yes
   with_items: '{{ lock.users }}'
   when: lock is defined
-...
+#...

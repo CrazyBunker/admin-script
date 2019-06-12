@@ -1,0 +1,10 @@
+adduser:
+  users:
+    - name: username_example
+      groups: ''
+      change: false
+    - name: user
+      groups: ''
+      change: true
+      sudo:
+        file: user

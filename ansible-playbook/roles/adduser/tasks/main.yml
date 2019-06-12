@@ -19,7 +19,17 @@
     state: present
   with_items: "{{ adduser.users }}"
   when: item.change
-  
+- name: "Add user item.name to sudo"
+  become: yes
+  lineinfile:
+    path: "/etc/sudoers.d/{{item.sudo.file}}"
+    line: '{{item.name}} ALL=(ALL) NOPASSWD: ALL'
+    state: present
+    mode: 0440
+    create: yes
+  validate: 'visudo -cf %s'
+  with_items: "{{ adduser.users }}"
+  when: item.sudo is defined
 #- name: set change password before first login
 #  command: chage -d 0 {{ item.name }}
 #  with_items: '{{ adduser.users }}'

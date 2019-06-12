@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: First install packades
+      apt:
+        name: "{{item}}"
+      with_items:
+        - aptitude
+        - vim
+        - mc
+        - unzip
+        - wget
+
+- name: create user
+  hosts: all
+  roles:
+  - { role: adduser }

@@ -1,3 +1,4 @@
+
 - hosts: docker
   roles:
     - { role: adduser }

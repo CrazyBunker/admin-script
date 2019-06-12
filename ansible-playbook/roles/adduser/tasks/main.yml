@@ -1,14 +1,8 @@
 ---
-#- name: Add a domain symlinks /tmp for server_aliases.
-#  debug: msg="name - {{ item.0.sudo.file }} and serverAlias - {{ item.1 }}"
-#  with_subelements:
-#   - "{{ adduser.users }}"
-#   - sudo.line
 - name: add users with default password (pass)
   become: yes
   user:
     name: '{{ item.name }}'
-#    password: "$6$VKqjcNgs4TtBG$qB4rZVnSME1ZVCxd/bWrX2uwKz5VQIYPZA5CEtfuDyIz/BQennnDgyD5vWrai2QpmJU/pqTY2vXqMixinju76."
     shell: /bin/bash
     createhome: yes
     groups: '{{ item.groups }}'
@@ -28,7 +22,7 @@
 - name: "Add user item.name to sudo"
   become: yes
   lineinfile:
-    path: "/etc/sudoers.d/{{item.0.sudo.file}}"
+    path: "/etc/sudoers.d/{{sudo_file}}"
     line:  "{{ item.1 }}"
     state: present
     mode: 0440
@@ -37,11 +31,7 @@
   with_subelements:
     - "{{ adduser.users }}"
     - sudo.line
-  when: item.0.change and item.0.sudo is defined
-#- name: set change password before first login
-#  command: chage -d 0 {{ item.name }}
-#  with_items: '{{ adduser.users }}'
-#  when: item.change
+  when: item.0.change and item.0.sudo.change
 
 - name: remove user
   become: yes
@@ -52,6 +42,19 @@
     force: yes
   with_items: '{{ rmuser.users }}'
   when: rmuser is defined
+
+
+- name: "remove from sudoers file {{sudo_file}}"
+  become: yes
+  lineinfile:
+    path: "/etc/sudoers.d/{{sudo_file}}"
+    regexp: "^{{ item }}\\s"
+    state: absent
+    mode: 0440
+  validate: 'visudo -cf %s'
+  with_items: '{{ rmuser.users }}'
+  when: rmuser is defined
+
 
 - name: lock user
   become: yes

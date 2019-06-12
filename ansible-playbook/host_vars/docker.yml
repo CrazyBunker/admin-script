@@ -1,20 +1,9 @@
 adduser:
   users:
-    - name: username
-      groups: ''
-      change: false
-      sudo:
-        file: username
-        line:
-          - "username ALL=(ALL) NOPASSWD: ALL"
     - name: user
       groups: ''
       change: true
       sudo:
-        file: user
+        change: true
         line:
           - "user ALL=(ALL) NOPASSWD: ALL"
-rmuser:
-   users:
-     - username
-#     - username_example

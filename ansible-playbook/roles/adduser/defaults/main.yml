@@ -1,4 +1,18 @@
 ---
 # defaults file for adduser
 users: users
+sudo_file: ansible
+adduser:
+  users:
+    - name: user
+      groups: ''
+      change: false
+      sudo:
+        state: true
+        line:
+          - "user ALL=(ALL) NOPASSWD: ALL"
+#rmuser:
+#   users:
+#     - username
+#     - username_example
 ...

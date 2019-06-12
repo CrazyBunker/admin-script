@@ -4,3 +4,6 @@ client1 ansible_ssh_host=192.168.1.23 ansible_ssh_user=user
 [docker]
 docker ansible_ssh_host=192.168.1.23 ansible_ssh_user=user
 
+[gitlab]
+docker ansible_ssh_host=192.168.1.15 ansible_ssh_user=user
+

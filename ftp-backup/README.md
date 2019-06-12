@@ -9,10 +9,12 @@ server1:
     password: <password>
     source: <path to directory in ftp>
     destination: <path to local directory>
+    days: <>
 server2:
     address: <ip>
     username: <username>
     password: <password>
     source: <path to directory in ftp>
     destination: <path to local directory>
+    days: <>
 ~~~~~~~~

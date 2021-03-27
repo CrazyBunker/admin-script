@@ -1,4 +1,0 @@
-- hosts: router
-  become: yes
-  roles:
-    - {role: dnsmasq}

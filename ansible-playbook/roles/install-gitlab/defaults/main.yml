@@ -1,6 +1,0 @@
----
-# defaults file for install-gitlab
-script:
-  - script.deb.sh
-packages:
-  - gitlab-ce

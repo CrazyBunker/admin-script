@@ -1,9 +1,0 @@
-adduser:
-  users:
-    - name: user
-      groups: ''
-      change: true
-      sudo:
-        change: true
-        line:
-          - "user ALL=(ALL) NOPASSWD: ALL"

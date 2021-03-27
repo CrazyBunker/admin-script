@@ -1,4 +1,0 @@
-- name: install dnsmasq
-  apt:
-    name: dnsmasq
-  when: install_dnsmasq

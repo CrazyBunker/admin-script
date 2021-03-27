@@ -1,3 +1,0 @@
-- hosts: docker
-  roles:
-      - { role: install-docker }

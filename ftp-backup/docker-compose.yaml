@@ -1,0 +1,7 @@
+services:
+  backup:
+    build: .
+    volumes:
+       - /home/qq/data/backup:/backup
+       - ./config:/app/config
+    restart: always

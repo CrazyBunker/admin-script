@@ -1,0 +1,17 @@
+---
+# tasks file for dnsmasq
+- name: Start os playbook
+  include_tasks: debian.yml
+  when: ansible_distribution == "Debian" or ansible_distribution="Ubuntu"
+
+- name: Start os playbook
+  include_tasks: rhel.yml
+  when: ansible_distribution == "Centos"
+
+- name: Configured dhcp-server
+  template:
+    src: "{{item}}.j2"
+    dest: "/{{item}}"
+  with_items:
+    - etc/dnsmasq.conf
+  notify: restart_dhcp_server

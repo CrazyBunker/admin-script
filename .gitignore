@@ -1,4 +1,4 @@
-*.yaml
+config
 venv
 .idea
 index.txt

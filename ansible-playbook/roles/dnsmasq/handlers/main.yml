@@ -1,0 +1,7 @@
+---
+# handlers file for dnsmasq
+- name: restart_dhcp_server
+  service:
+    name: dnsmasq.service
+    enabled: yes
+    state: restarted

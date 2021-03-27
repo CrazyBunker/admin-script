@@ -82,7 +82,7 @@ if __name__ == "__main__":
             print("Archives to download:")
             for list in list_archive:
                 print(list)
-        time.sleep(60)
+        time.sleep(1800)
 
 
 

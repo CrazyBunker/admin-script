@@ -74,15 +74,15 @@ class download_from_ftp():
                  os.remove(local_filename)
 
 if __name__ == "__main__":
-    archives = download_from_ftp(os.path.join(os.path.dirname(__file__),'config.yaml'))
-    list_archive = archives.download_archive()
-    if not list_archive:
-        print("No archives to download")
-    else:
-        print("Archives to download:")
-        for list in list_archive:
-            print(list)
-
+    archives = download_from_ftp(os.path.join(os.path.dirname(__file__),'config','config.yaml'))
+    print("Script is running...")
+    while True:
+        list_archive = archives.download_archive()
+        if list_archive:
+            print("Archives to download:")
+            for list in list_archive:
+                print(list)
+        time.sleep(60)
 
 
 

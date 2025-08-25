@@ -1,0 +1,110 @@
+# Set local variables
+:local firstInterface "pppoe-in";
+:local secondInterface "lte1";
+:local secondGateway "192.168.102.1";
+:local pingTo1 "8.8.8.8";
+:local pingTo2 "77.88.8.8";
+:local pingTo3 "10.10.10.1";
+:local pingCount 3;
+:local pingInterval "2s";
+:local stableConnectFrom 50;
+:local prefix ">>> ";
+:local telegramToken "";
+:local telegramChat "";
+:local firstInterfaceName $firstInterface;
+:local secondInterfaceName $secondInterface;
+
+# Initialize log collection
+:local logMessage "";
+
+# Function to cleaning ARP table
+:local clearArp do={
+    :local dumplist [/ip arp find];
+    :foreach i in=$dumplist do={
+        /ip arp remove $i;
+    }
+}
+
+# Function to reconnect PPPoE connection
+:local reconnectPPPoE do={
+    /interface pppoe-client set $nameInterface disable=yes;
+    :delay 1s;
+    /interface pppoe-client set $nameInterface disable=no;
+}
+
+# Telegram notification function (157 87<5=5=8O logMessage)
+:local sendToTelegram do={
+    :delay 5s;
+    /tool fetch http-method=post url=("https://api.telegram.org/bot" . $telegramToken . "/sendMessage?chat_id=" . $telegramChat . "&text=Distance for lte1 changed, distance " . $distance) dst-path=telegram.txt;
+}
+
+# Start marker
+:set logMessage ($logMessage . $prefix . "START; ");
+
+# Check first interface (PPPoE)
+/interface pppoe-client {
+    :if ( [get $firstInterface disable] = true) do={
+        set $firstInterface disable=no;
+        :delay 5s;
+        :set logMessage ($logMessage . "PPPoE enabled; ");
+    }
+}
+
+# Check second interface (LTE)
+/interface lte {
+    :if ( [get $secondInterface disable] = true) do={
+        set $secondInterface disable=no;
+        :set logMessage ($logMessage . "LTE enabled; ");
+    }
+}
+
+/ip route {
+    :local firstRoute [find dst-address="0.0.0.0/0" gateway=$firstInterfaceName];
+    :local secondRoute [find dst-address="0.0.0.0/0" gateway=$secondGateway];
+
+    # Correct routes if needed
+    :if ( [get $firstRoute distance] != 2 ) do={
+        set $firstRoute distance=2;
+        :set logMessage ($logMessage . "Corrected $firstInterfaceName distance; ");
+    }
+
+    :if ( [get $secondRoute distance] != 1 && [get $secondRoute distance] != 3) do={
+        /interface lte apn set [find default] default-route-distance=3;
+        :set logMessage ($logMessage . "Corrected $secondInterfaceName distance; ");
+    }
+
+    # Ping tests
+    :local tstPing1 [/ping $pingTo1 interface=$firstInterfaceName count=$pingCount interval=$pingInterval];
+    :delay 5s;
+    :local tstPing2 [/ping $pingTo2 interface=$firstInterfaceName count=$pingCount interval=$pingInterval];
+    :delay 5s;
+    :local tstPing3 [/ping $pingTo3 interface=$firstInterfaceName count=$pingCount interval=$pingInterval];
+    
+    :local pingStatus (($tstPing1 + $tstPing2 + $tstPing3) * 100 / ($pingCount * 3));
+    :set logMessage ($logMessage . "Ping:" . $pingStatus . "%; ");
+
+    # Connection logic
+    :if ( [get $firstRoute active] = false || $pingStatus < $stableConnectFrom) do={
+        :set logMessage ($logMessage . "Primary FAIL; ");
+        
+        :if ( [get $secondRoute distance] != 1 ) do={
+        /interface lte apn set [find default] default-route-distance=1;
+            $clearArp;
+            $sendToTelegram distance=1 telegramToken=$telegramToken telegramChat=$telegramChat
+            :set logMessage ($logMessage . "LTE primary; Telegram sent; ");
+        }
+        
+        $reconnectPPPoE nameInterface=$firstInterfaceName;
+    } else={
+        :if ( [get $secondRoute distance] != 3 ) do={
+        /interface lte apn set [find default] default-route-distance=3;
+            $clearArp;
+            $sendToTelegram distance=1 telegramToken=$telegramToken telegramChat=$telegramChat
+            :set logMessage ($logMessage . "LTE secondary; Telegram sent; ");
+        }
+    }
+}
+
+# Final log output
+:set logMessage ($logMessage . $prefix . "END");
+:log info $logMessage;
